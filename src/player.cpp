@@ -26,6 +26,7 @@ namespace pacman
         default:
             break;
         }
+        current_direction = next;
     }
 
     int Player::get_x_position() const

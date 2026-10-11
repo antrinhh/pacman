@@ -9,6 +9,7 @@ namespace pacman
         Down,
         Left,
         Right,
+        Dummy,
     };
     class Player
     {
@@ -17,8 +18,10 @@ namespace pacman
         void move(Direction next);
         int get_x_position() const;
         int get_y_position() const;
+        Direction get_curr_direction() const { return current_direction; }
 
     private:
+        Direction current_direction{Direction::Dummy};
         int x;
         int y;
     };
