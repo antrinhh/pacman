@@ -82,11 +82,11 @@ namespace render
         }
     }
 
-    void MapRenderer::draw_player(sf::RenderWindow &window, const pacman::Player &pac)
+    void MapRenderer::draw_player(sf::RenderWindow &window, float x, float y)
     {
         float cell_size = tile.get_size();
-        float x_position = (pac.get_x_position() + 0.5f) * cell_size;
-        float y_position = (pac.get_y_position() + 0.5f) * cell_size;
+        float x_position = (x + 0.5f) * cell_size;
+        float y_position = (y + 0.5f) * cell_size;
         player.setPosition({x_position, y_position});
         window.draw(player);
     }

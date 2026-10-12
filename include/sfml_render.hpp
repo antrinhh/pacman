@@ -67,7 +67,7 @@ namespace render
     public:
         MapRenderer(render::Player &player_render);
         void draw_map(sf::RenderWindow &target, const pacman::Map &map);
-        void draw_player(sf::RenderWindow &window, const pacman::Player &pac);
+        void draw_player(sf::RenderWindow &window, float x, float y);
 
     private:
         Tile tile;

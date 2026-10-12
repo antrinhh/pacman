@@ -37,6 +37,9 @@ int main()
     float t_accumulate{0.f};
     const float move_interval{0.15f};
 
+    float x_previous{1.f};
+    float y_previous{1.f};
+
     while (window.isOpen())
     {
         while (const auto event = window.pollEvent())
@@ -58,14 +61,22 @@ int main()
         t_accumulate += dt;
         while (t_accumulate >= move_interval)
         {
+            x_previous = static_cast<float>(pax.get_x_position());
+            y_previous = static_cast<float>(pax.get_y_position());
             t_accumulate -= move_interval;
+            game.update_map();
             game.update_player();
         }
-        game.update_map();
+
+        float alpha = t_accumulate / move_interval;
+        float draw_x = x_previous + (static_cast<float>(pax.get_x_position()) - x_previous) * alpha;
+        float draw_y = y_previous + (static_cast<float>(pax.get_y_position()) - y_previous) * alpha;
+
         pax_render.update(dt);
         window.clear(sf::Color::Black);
         renderer.draw_map(window, map);
-        renderer.draw_player(window, pax);
+        renderer.draw_player(window, draw_x, draw_y);
+
         window.display();
     }
 }
