@@ -4,40 +4,61 @@
 
 namespace render
 {
-    Tile::Tile(float tile_size, float wall_size)
-        : sf::RectangleShape({tile_size, tile_size})
+    Player::Player(const pacman::Player &player)
+        : sf::Texture("assets/pacman_sheet_white_deeper.png"),
+          sf::Sprite(static_cast<const sf::Texture &>(*this)),
+          m_pac(player)
     {
-        setOrigin({tile_size / 2.0f, tile_size / 2.0f});
-        setFillColor(fill_color);
-        setOutlineColor(wall_color);
-        setOutlineThickness(wall_size);
+        this->setSmooth(true);
+        this->setTextureRect(sf::IntRect({0, 0}, {x_pixels, y_pixels}));
+        this->setScale({0.25f, 0.25f});
+        this->setColor(m_fill_color);
+        this->setOrigin({static_cast<float>(x_pixels / 2), static_cast<float>(y_pixels / 2)});
     }
 
-    Pellet::Pellet(float size)
-        : sf::CircleShape(size, 20)
+    void Player::update(float time)
     {
-        setOrigin({size, size});
-        setFillColor(fill_color);
+        m_animation_elapsed += time;
+
+        while (m_animation_elapsed >= m_animation_dt)
+        {
+            m_animation_elapsed -= m_animation_dt;
+            m_frame = (m_frame + 1) % 3; // 0 → 1 → 2 → 0
+        }
+
+        setTextureRect(sf::IntRect(
+            {x_pixels * m_frame, 0},
+            {x_pixels, y_pixels}));
+        switch (m_pac.get_curr_direction())
+        {
+        case pacman::Direction::Up:
+            this->setRotation(sf::degrees(270.f));
+            break;
+        case pacman::Direction::Down:
+            this->setRotation(sf::degrees(90.f));
+            break;
+        case pacman::Direction::Left:
+            this->setRotation(sf::degrees(180.f));
+            break;
+        case pacman::Direction::Right:
+            this->setRotation(sf::degrees(0.f));
+            break;
+        default:
+            break;
+        }
     }
 
-    Player::Player(float size)
-        : sf::CircleShape(size, 20)
-    {
-        setOrigin({size, size});
-        setFillColor(fill_color);
-    }
-
-    MapRenderer::MapRenderer(float cell_size, float grid_space, float tile_outline)
-        : cell_size(cell_size),
-          tile(cell_size - grid_space, tile_outline),
-          pellet(3.0f),
-          player(7.0f)
+    MapRenderer::MapRenderer(render::Player &player_render)
+        : tile(),
+          pellet(),
+          player(player_render)
     {
     }
 
     void MapRenderer::draw_map(sf::RenderWindow &target, const pacman::Map &map)
     {
         const auto &real_map = map.get_map();
+        float cell_size = tile.get_size();
         float y_track = cell_size / 2;
 
         for (std::size_t row{0}; row < real_map.size(); row++)
@@ -63,6 +84,7 @@ namespace render
 
     void MapRenderer::draw_player(sf::RenderWindow &window, const pacman::Player &pac)
     {
+        float cell_size = tile.get_size();
         float x_position = (pac.get_x_position() + 0.5f) * cell_size;
         float y_position = (pac.get_y_position() + 0.5f) * cell_size;
         player.setPosition({x_position, y_position});

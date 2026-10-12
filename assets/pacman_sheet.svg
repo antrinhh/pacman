@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="64" viewBox="0 0 192 64">
+  <title>Pac-Man mouth animation: closed, half open, wide open</title>
+  <desc>Three 64 by 64 frames. Transparent background. All frames face right.</desc>
+  <g fill="#FFE033">
+    <circle cx="32" cy="32" r="28"/>
+    <path d="M 96 32 L 121.868627 21.284864 A 28 28 0 1 0 121.868627 42.715136 Z"/>
+    <path d="M 160 32 L 179.798990 12.201010 A 28 28 0 1 0 179.798990 51.798990 Z"/>
+  </g>
+</svg>

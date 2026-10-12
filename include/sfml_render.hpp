@@ -2,6 +2,7 @@
 #define _SFML_RENDER_HPP_
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 namespace pacman
 {
@@ -14,43 +15,64 @@ namespace render
     class Tile : public sf::RectangleShape
     {
     public:
-        Tile(float tile_size, float wall_size);
+        Tile() : sf::RectangleShape({18.f, 18.f})
+        {
+            this->setOrigin(this->getGeometricCenter());
+            this->setFillColor(m_fill_color);
+            this->setOutlineThickness(m_outline_thickness);
+            this->setOutlineColor(m_outline_color);
+            sf::Vector2f size = this->getSize();
+            m_size = size.x;
+        };
+        float get_size() { return m_size + fabs(m_outline_thickness); }
 
     private:
-        sf::Color fill_color{20, 35, 110};
-        sf::Color wall_color{33, 33, 222};
+        float m_size;
+        float m_outline_thickness{-2.f};
+        sf::Color m_fill_color{20, 35, 110};
+        sf::Color m_outline_color{33, 33, 222};
     };
 
     class Pellet : public sf::CircleShape
     {
     public:
-        Pellet(float size);
+        Pellet() : sf::CircleShape(3.f)
+        {
+            this->setOrigin(this->getGeometricCenter());
+            this->setFillColor(m_fill_color);
+        };
 
     private:
-        sf::Color fill_color{sf::Color::Yellow};
+        sf::Color m_fill_color{sf::Color::Yellow};
     };
 
-    class Player : public sf::CircleShape
+    class Player : public sf::Texture, public sf::Sprite
     {
     public:
-        Player(float size);
+        Player(const pacman::Player &player);
+        void update(float time);
 
     private:
-        sf::Color fill_color{sf::Color::Yellow};
+        float m_animation_dt{0.1f};
+        float m_animation_elapsed{0.f};
+        int m_frame{0};
+        int x_pixels{64};
+        int y_pixels{64};
+        const pacman::Player &m_pac;
+        sf::Color m_fill_color{sf::Color::Yellow};
     };
 
     class MapRenderer
     {
     public:
-        MapRenderer(float cell_size, float grid_space, float tile_outline);
+        MapRenderer(render::Player &player_render);
         void draw_map(sf::RenderWindow &target, const pacman::Map &map);
         void draw_player(sf::RenderWindow &window, const pacman::Player &pac);
 
     private:
-        float cell_size;
         Tile tile;
         Pellet pellet;
-        Player player;
+        Player &player;
     };
 
 }

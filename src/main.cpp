@@ -10,13 +10,17 @@ int main()
     pacman::Map map;
     pacman::Player pax(1, 1);
     map.set_map(pacman::map_1);
-
     pacman::Game game(pax, map);
 
-    render::MapRenderer renderer(20.0f, 2.0f, -2.0f);
+    render::Player pax_render(pax);
+    render::MapRenderer renderer(pax_render);
+
+    sf::Clock clock;
 
     while (window.isOpen())
     {
+        float dt = clock.restart().asSeconds();
+
         while (const auto event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -60,6 +64,7 @@ int main()
             }
         }
         game.update_map();
+        pax_render.update(dt);
         window.clear(sf::Color::Black);
         renderer.draw_map(window, map);
         renderer.draw_player(window, pax);
