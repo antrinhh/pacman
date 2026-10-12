@@ -28,3 +28,10 @@ target_include_directories(pacman PRIVATE include)
 target_link_libraries(pacman PRIVATE SFML::Graphics)
 
 target_compile_features(pacman PRIVATE cxx_std_17)
+add_custom_command(TARGET pacman POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+        "$<TARGET_FILE:pacman>"
+        "${PROJECT_SOURCE_DIR}/$<TARGET_FILE_NAME:pacman>"
+    COMMENT "Copying pacman outside the project directory"
+    VERBATIM
+)
