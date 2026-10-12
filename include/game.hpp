@@ -12,6 +12,7 @@ namespace pacman
         Game(Player &player, Map &map);
         bool can_move(Direction next);
         void update_map();
+        void update_player();
 
     private:
         Player &m_pakkuman;

@@ -39,4 +39,16 @@ namespace pacman
         auto &map_cells = m_map.get_map();
         map_cells[y][x] = ' ';
     }
+
+    void Game::update_player()
+    {
+        if (m_pakkuman.get_req_direction() != pacman::Direction::Dummy && can_move(m_pakkuman.get_req_direction()))
+        {
+            m_pakkuman.set_curr_direction(m_pakkuman.get_req_direction());
+        }
+        if (can_move(m_pakkuman.get_curr_direction()))
+        {
+            m_pakkuman.move();
+        }
+    }
 }

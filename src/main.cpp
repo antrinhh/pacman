@@ -4,9 +4,27 @@
 #include "player.hpp"
 #include "game.hpp"
 
+pacman::Direction direction_from_key(sf::Keyboard::Scancode key)
+{
+    switch (key)
+    {
+    case sf::Keyboard::Scancode::W:
+        return pacman::Direction::Up;
+    case sf::Keyboard::Scancode::A:
+        return pacman::Direction::Left;
+    case sf::Keyboard::Scancode::S:
+        return pacman::Direction::Down;
+    case sf::Keyboard::Scancode::D:
+        return pacman::Direction::Right;
+    }
+    return pacman::Direction::Dummy;
+}
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode({1280, 720}), "pacman");
+    window.setFramerateLimit(120);
+
     pacman::Map map;
     pacman::Player pax(1, 1);
     map.set_map(pacman::map_1);
@@ -16,11 +34,11 @@ int main()
     render::MapRenderer renderer(pax_render);
 
     sf::Clock clock;
+    float t_accumulate{0.f};
+    const float move_interval{0.15f};
 
     while (window.isOpen())
     {
-        float dt = clock.restart().asSeconds();
-
         while (const auto event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -33,35 +51,15 @@ int main()
                 {
                     window.close();
                 }
-                if (key->scancode == sf::Keyboard::Scancode::W)
-                {
-                    if (game.can_move(pacman::Direction::Up))
-                    {
-                        pax.move(pacman::Direction::Up);
-                    }
-                }
-                if (key->scancode == sf::Keyboard::Scancode::A)
-                {
-                    if (game.can_move(pacman::Direction::Left))
-                    {
-                        pax.move(pacman::Direction::Left);
-                    }
-                }
-                if (key->scancode == sf::Keyboard::Scancode::S)
-                {
-                    if (game.can_move(pacman::Direction::Down))
-                    {
-                        pax.move(pacman::Direction::Down);
-                    }
-                }
-                if (key->scancode == sf::Keyboard::Scancode::D)
-                {
-                    if (game.can_move(pacman::Direction::Right))
-                    {
-                        pax.move(pacman::Direction::Right);
-                    }
-                }
+                pax.set_req_direction(direction_from_key(key->scancode));
             }
+        }
+        float dt = clock.restart().asSeconds();
+        t_accumulate += dt;
+        while (t_accumulate >= move_interval)
+        {
+            t_accumulate -= move_interval;
+            game.update_player();
         }
         game.update_map();
         pax_render.update(dt);

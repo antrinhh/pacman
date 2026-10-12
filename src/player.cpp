@@ -7,9 +7,9 @@ namespace pacman
     {
     }
 
-    void Player::move(Direction next)
+    void Player::move()
     {
-        switch (next)
+        switch (current_direction)
         {
         case Direction::Up:
             y--;
@@ -26,7 +26,6 @@ namespace pacman
         default:
             break;
         }
-        current_direction = next;
     }
 
     int Player::get_x_position() const
@@ -36,5 +35,14 @@ namespace pacman
     int Player::get_y_position() const
     {
         return y;
+    }
+
+    void Player::set_req_direction(Direction dir)
+    {
+        requested_direction = dir;
+    }
+    void Player::set_curr_direction(Direction dir)
+    {
+        current_direction = dir;
     }
 }
